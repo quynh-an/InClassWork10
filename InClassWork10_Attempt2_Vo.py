@@ -12,14 +12,25 @@ class Student():
         self.student_id = student_id
         self.course_taken = []
         self.enrolled_courses = []
-        credit_limit = 16
+        self.credit_count = 0
+        self.credit_limit = 16
+        self.elective_courses = ["EECE2540", "EECE3410", "PHYS4623", "PHYS4115", "BIOL1115"]
         
     def enroll(self, course):
-        if course.add_student(self):
-            self.enrolled_courses.append(course.code)
-            print(f"{self.name} successfully enrolled in {course.name}")
+        for i in enrolled_courses:
+            if 
+        if self.credit_count <= self.credit_limit:
+            if course.add_student(self):
+                self.enrolled_courses.append(course.code)
+                if course.code in self.elective_courses:
+                    print(f"{self.name} successfully enrolled in the elective {course.name}")
+                else:
+                    print(f"{self.name} successfully enrolled in {course.name}")
+                self.credit_count = self.credit_count + course.num_credits
+            else:
+                print(f"Failed to enroll{self.name} in {course.name}: Course full.")
         else:
-            print(f"Failed to enroll{self.name} in {course.name}: Course full.")
+            print(f"{self.name} has reached the credit limit and cannot register for anymore courses.")  
             
     def add_classes_taken(self, course):
        self.finished_courses.append(course)
@@ -28,21 +39,15 @@ class Student():
     def get_enrolled_courses(self):
         return self.enrolled_courses
 
-class Major(Student):
-    def __init__(self, name, student_id):
-        super().__init__(name, student_id)
-        elective_courses = ["EECE2540", "EECE3410", "PHYS4623", "PHYS4115"]
-        pass
-
-class ElectricalEngineering(Major):
+class ElectricalEngineering(Student):
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
         self.required_courses = ["EECE2140", "PHYS1151"]
 
-class Physics(Major):
+class Physics(Student):
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
-        self.required_courses = ["PHYS1151", "PHYS2303"]
+        self.required_courses = ["PHYS1151", "PHYS1155", "PHYS2303"]
 
 class ElectricalEngineering_and_Physics(ElectricalEngineering, Physics):
     def __init__(self, name, student_id):
@@ -89,8 +94,24 @@ class Course:
         return self.enrolled_students
 
 
-
 # =============================
 rachel = ElectricalEngineering_and_Physics("Rachel Smith", 10001)
-PHYS4623 = Course("PHYS4623", "Medical Physics", 4, "Wednesday", "11:45", 25)
-print (rachel.required_courses)
+jane = ElectricalEngineering("Jane Doe", 10002)
+BIOL1115 = Course("BIOL1115", "General Biology 1 for Engineers", 4, "Monday", "8:00", 60)
+PHYS1151 = Course("PHYS1151", "Physics 1 for Engineers", 4, "Monday", "11:45", 40) 
+ENGW1101 = Course("ENGW1101", "First Year Writing", 4, "Monday", "11:45", 30)
+PHYS1155 = Course("PHYS1155", "Physics 2 for Engineers", 4, "Tuesday", "9:50", 35)
+PHYS1155.add_prerequisites(PHYS1151)
+PHYS2303 = Course("PHYS2303", "Modern Physics", 4, "Wednesday", "2:50", 25)
+PHYS2303.add_prerequisites(PHYS1155)
+PHYS4623 = Course("PHYS4623", "Medical Physics", 4, "Wednesday", "11:45", 15)
+EECE2140 = Course("EECE2140", "Computing Fundamentals for Engineers", 4, "Wednesday", "11:45", 35)
+
+# =============================
+def main():
+    # Task 1
+    jane.enroll(EECE2140)
+    jane.enroll(BIOL1115)
+    
+
+main()

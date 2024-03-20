@@ -6,14 +6,48 @@ Created on Fri Mar 15 12:44:02 2024
 @author: tandyllc
 """
 
+class Student:
+    def __init__(self, name, student_id, major):
+        self.name = name
+        self.student_id = student_id
+        self.course_taken = []
+        self.enrolled_courses = []
+        
+    def enroll(self, course):
+        if course.add_student(self):
+            self.enrolled_courses.append(course.code)
+            print(f"{self.name} successfully enrolled in {course.name}")
+        else:
+            print(f"Failed to enroll{self.name} in {course.name}: Course full.")
+            
+    def add_classes_taken(self, course):
+       self.finished_courses.append(course)
+       print(f"{self.name} has completed {course.code}.")
+       
+    def get_enrolled_courses(self):
+        return self.enrolled_courses
+    
+class DualMajorStudent(Student):
+    def __init__(self, name, student_id, major1, major2):
+        super().__init__(name, student_id, major1)
+        self.major2 = major2
+        
+    def enroll(self, course):
+        if course.major_requirement == self.major or course.major_requirement == self.major2:
+            self.courses.append(course)
+            return True
+        else:
+            return False
+        
 class Course:
-    def __init__(self, code, name, num_credits, time, max_students):
+    def __init__(self, code, name, major_requirement, num_credits, day, time, max_students):
         self.code = code
         self.name = name
+        self,major_requirement = major_requirement
         self.num_credits = num_credits
         self.time = time
         self.max_students = max_students
-        self.students_enrolled = []
+        self.enrolled_students = []
         self.prereqs = []
         
     def add_student(self, student):
@@ -27,15 +61,28 @@ class Course:
                         print(f"{student.name} meets the prerequisites for {self.name}.")
             if self.prereqs == []:
                 self.enrolled_students.append(student.name)
-
             return True
         else:
             return False
+    
+    def is_full(self):
+        return len(self.enrolled_students) >= self.max_students
+    
+    def add_prerequisites(self, prereq_course_code):
+        self.prereqs.append(prereq_course_code.code)
         
-class Student:
-    def __init__(self, name, student_id, major):
-        self.name = name
-        self.student_id = student_id
-        self.major = major
-        self.course_taken = []
-        
+    def get_prerequisites(self):
+        return self.prereqs
+    
+    def get_enrolled_students(self):
+        return self.enrolled_students
+
+# ==============================================================
+def main():
+    EECE2140 = Course("EECE2140", "Computing Fundamentals for Engineers", "Electrical Engineering", 4, "Wednesday", "11:45", 35)
+    jane = Student("Jane Doe", 10001, "Electrical Engineering")
+    jane.enroll(EECE2140)
+    print(EECE2140.get_enrolled_students())
+    print(jane.get_enrolled_courses())
+    
+main()

@@ -28,6 +28,7 @@ class Student():
     def get_enrolled_courses(self):
         return self.enrolled_courses
     
+    
 class DualMajorStudent(Student):
     def __init__(self, name, student_id, major1, major2):
         super().__init__(name, student_id, major1)

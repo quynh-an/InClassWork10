@@ -14,23 +14,35 @@ class Student():
         self.enrolled_courses = []
         self.credit_count = 0
         self.credit_limit = 16
+        self.schedule = []
         self.elective_courses = ["EECE2540", "EECE3410", "PHYS4623", "PHYS4115", "BIOL1115"]
         
     def enroll(self, course):
-        for i in enrolled_courses:
-            if 
-        if self.credit_count <= self.credit_limit:
-            if course.add_student(self):
-                self.enrolled_courses.append(course.code)
-                if course.code in self.elective_courses:
-                    print(f"{self.name} successfully enrolled in the elective {course.name}")
+        scheduling_conflict = 0
+        if course.code not in self.enrolled_courses:
+            if self.credit_count <= self.credit_limit:
+                for i in self.schedule:
+                    if i[0] == course.day and i[1] == course.time:
+                        scheduling_conflict = 1
+                    else:
+                        scheduling_conflict = 0
+                if scheduling_conflict == 0:
+                    if course.add_student(self):
+                        self.enrolled_courses.append(course.code)
+                        if course.code in self.elective_courses:
+                            print(f"{self.name} successfully enrolled in the elective {course.name}")
+                        else:
+                            print(f"{self.name} successfully enrolled in {course.name}")
+                        self.credit_count = self.credit_count + course.num_credits
+                    else:
+                        print(f"Failed to enroll{self.name} in {course.name}: Course full.")
                 else:
-                    print(f"{self.name} successfully enrolled in {course.name}")
-                self.credit_count = self.credit_count + course.num_credits
+                    print(f"Cannot register for {course.code} due to a scheduling conflict for {course.day} at {course.time}")
+                        
             else:
-                print(f"Failed to enroll{self.name} in {course.name}: Course full.")
+                print(f"{self.name} has reached the credit limit and cannot register for anymore courses.")  
         else:
-            print(f"{self.name} has reached the credit limit and cannot register for anymore courses.")  
+            print(f"{self.name} is already in the course {course.name}.")
             
     def add_classes_taken(self, course):
        self.finished_courses.append(course)
@@ -51,16 +63,15 @@ class Physics(Student):
 
 class ElectricalEngineering_and_Physics(ElectricalEngineering, Physics):
     def __init__(self, name, student_id):
-        super().__init__(name, student_id)
-        EE = ElectricalEngineering(name, student_id)
-        physics_major = Physics(name, student_id)
-        self.required_courses = list(set(EE.required_courses + physics_major.required_courses))
+        super().__init__(name,student_id)
+        self.required_courses = list(set(ElectricalEngineering.required_courses + Physics.required_courses))
         
 class Course:
     def __init__(self, code, name, num_credits, day, time, max_students):
         self.code = code
         self.name = name
         self.num_credits = num_credits
+        self.day = day
         self.time = time
         self.max_students = max_students
         self.enrolled_students = []
@@ -77,9 +88,12 @@ class Course:
                         print(f"{student.name} meets the prerequisites for {self.name}.")
             if self.prereqs == []:
                 self.enrolled_students.append(student.name)
+            class_time = (self.day, self.time)
+            student.schedule.append(class_time)
             return True
         else:
             return False
+        
     
     def is_full(self):
         return len(self.enrolled_students) >= self.max_students
@@ -111,7 +125,13 @@ EECE2140 = Course("EECE2140", "Computing Fundamentals for Engineers", 4, "Wednes
 def main():
     # Task 1
     jane.enroll(EECE2140)
+    
+    # Task 2
     jane.enroll(BIOL1115)
     
+    jane.enroll(ENGW1101)
+    jane.enroll(PHYS1151)
+    
+    print(jane.schedule)
 
 main()

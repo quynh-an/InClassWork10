@@ -50,16 +50,19 @@ class Student():
        
     def get_enrolled_courses(self):
         return self.enrolled_courses
+    
+    def check_requirements(self):
+        
 
 class ElectricalEngineering(Student):
+    required_courses = ["EECE2140", "PHYS1151", "ENGW1101", "EECE2150"]
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
-        self.required_courses = ["EECE2140", "PHYS1151"]
 
 class Physics(Student):
+    required_courses = ["PHYS1155", "PHYS1151", "ENGW1101", "PHYS2303"]
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
-        self.required_courses = ["PHYS1151", "PHYS1155", "PHYS2303"]
 
 class ElectricalEngineering_and_Physics(ElectricalEngineering, Physics):
     def __init__(self, name, student_id):
@@ -123,15 +126,17 @@ EECE2140 = Course("EECE2140", "Computing Fundamentals for Engineers", 4, "Wednes
 
 # =============================
 def main():
-    # Task 1
+    # Task 1: Enroll in course for single major
     jane.enroll(EECE2140)
+    jane.enroll(ENGW1101)
     
-    # Task 2
+    # Task 2: Enroll in course for double major
+    rachel.enroll(PHYS1151)
+    
+    # Task 3: Elective
     jane.enroll(BIOL1115)
     
-    jane.enroll(ENGW1101)
+    # Task 3:
     jane.enroll(PHYS1151)
-    
-    print(jane.schedule)
 
 main()

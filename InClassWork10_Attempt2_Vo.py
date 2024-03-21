@@ -15,7 +15,6 @@ class Student():
         self.credit_count = 0
         self.credit_limit = 16
         self.schedule = []
-        self.elective_courses = ["EECE2540", "EECE3410", "PHYS4623", "PHYS4115", "BIOL1115"]
         
     def enroll(self, course):
         scheduling_conflict = 0
@@ -73,14 +72,33 @@ class Student():
 
 class ElectricalEngineering(Student):
     required_courses = ["EECE2140", "PHYS1151", "ENGW1101", "EECE2150"]
+    elective_courses = ["EECE2540", "EECE3410", "BIOL1107"]
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
 
 class Physics(Student):
     required_courses = ["PHYS1155", "PHYS1151", "ENGW1101", "PHYS2303"]
+    elective_courses = ["PHYS4623", "PHYS4115", "BIOL1107"]
+    def __init__(self, name, student_id):
+        super().__init__(name, student_id)
+        
+class Biology(Student):
+    required_courses = ["BIOL1107", "BIOL2299", "ENGW1101", "BIOL2301"]
+    elective_courses = ["EEMB2302", "PHYS4115", "IE2140"]
+    def __init__(self, name, student_id):
+        super().__init__(name, student_id)
+        
+class Ecology(Biology, Student):
+    required_courses = list(set(Biology.required_courses + ["EEMB2290", "EEMB3455", "EEMB3460", "EEMB5130"]))
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
 
+class Genetics(Biology, Student):
+    required_courses = list(set(Biology.required_courses + ["BIOL3419.", "BIOL5583" , "BIOL5591"]))
+    def __init__(self, name, student_id):
+        super().__init__(name, student_id)
+
+# MuMultiple Inheritance
 class ElectricalEngineering_and_Physics(ElectricalEngineering, Physics):
     def __init__(self, name, student_id):
         super().__init__(name,student_id)
@@ -150,7 +168,9 @@ class Course:
 # =============================
 rachel = ElectricalEngineering_and_Physics("Rachel Smith", 10001)
 jane = ElectricalEngineering("Jane Doe", 10002)
-BIOL1115 = Course("BIOL1115", "General Biology 1 for Engineers", 4, "Monday", "8:00", 60)
+frank = Biology("Frank Johnson", 10003)
+ryan = Physics("Ryan Vu", 10004)
+BIOL1107 = Course("BIOL1107", "Foundations of Biology", 4, "Monday", "8:00", 60)
 PHYS1151 = Course("PHYS1151", "Physics 1 for Engineers", 4, "Monday", "11:45", 40) 
 ENGW1101 = Course("ENGW1101", "First Year Writing", 4, "Monday", "11:45", 30)
 PHYS1155 = Course("PHYS1155", "Physics 2 for Engineers", 4, "Tuesday", "9:50", 35)
@@ -186,7 +206,7 @@ def main():
     print(" ")
     
     # Task 3: Elective
-    jane.enroll(BIOL1115)
+    jane.enroll(BIOL1107)
     
     # Task 4: Time Conflict
     jane.enroll(PHYS1151)
@@ -198,5 +218,25 @@ def main():
     jane.enroll(ENGW1101)
     jane.enroll(MATH1341)
     print("Jane now has this many credits:", jane.credit_count)
+    print(" ")
+    
+    # Task 7 Elective vs Requirement
+    frank.enroll(BIOL1107)
+    print("Frank still has these to do:")
+    print(frank.check_requirements())
+    print(" ")
+    ryan.enroll(BIOL1107)
+    print("Ryan still has these classes to take for his major:")
+    print(ryan.check_requirements())
+    print(" ")
+    
+    # Hierarchical Inheritance
+    madison = Ecology("Madison Harris", 10005)
+    print("These are Madison's required courses:")
+    print(madison.required_courses)
+    print(" ")
+    rebecca = Genetics("Rebecca Turner", 10006)
+    print("These are Rebecca's required courses:")
+    print(rebecca.required_courses)
 
 main()

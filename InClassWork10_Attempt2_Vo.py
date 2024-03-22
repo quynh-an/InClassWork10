@@ -17,41 +17,44 @@ class Student():
         self.schedule = []
         
     def enroll(self, course):
-        scheduling_conflict = 0
-        if course.code not in self.enrolled_courses:
-            if self.credit_count < self.credit_limit:
-                for i in self.schedule:
-                    if i[0] == course.day and i[1] == course.time:
-                        scheduling_conflict = 1
-                    else:
-                        scheduling_conflict = 0
-                if scheduling_conflict == 0:
-                    success_course_add = course.add_student(self)
-                    if success_course_add == 3:
-                        self.enrolled_courses.append(course.code)
-                        if course.code in self.elective_courses:
-                            print(f"{self.name} successfully enrolled in the elective {course.name}")
+        if course.code not in list(set(self.required_courses + self.elective_courses)):
+            print(f"{self.name} is not allowed to register for {course.code} because of major restrictions.")
+        else:
+            scheduling_conflict = 0
+            if course.code not in self.enrolled_courses:
+                if self.credit_count < self.credit_limit:
+                    for i in self.schedule:
+                        if i[0] == course.day and i[1] == course.time:
+                            scheduling_conflict = 1
+                        else:
+                            scheduling_conflict = 0
+                    if scheduling_conflict == 0:
+                        success_course_add = course.add_student(self)
+                        if success_course_add == 3:
+                            self.enrolled_courses.append(course.code)
+                            if course.code in self.elective_courses:
+                                print(f"{self.name} successfully enrolled in the elective {course.name}")
+                                print(" ")
+                            else:
+                                print(f"{self.name} successfully enrolled in {course.name}")
+                                print(" ")
+                            self.credit_count = self.credit_count + course.num_credits
+                        elif success_course_add == 2:
+                            print(f"Failed to enroll {self.name} in {course.name}: Prerequisite Courses Not Met.")
                             print(" ")
                         else:
-                            print(f"{self.name} successfully enrolled in {course.name}")
+                            print(f"Failed to enroll {self.name} in {course.name}: Course full.")
                             print(" ")
-                        self.credit_count = self.credit_count + course.num_credits
-                    elif success_course_add == 2:
-                        print(f"Failed to enroll {self.name} in {course.name}: Prerequisite Courses Not Met.")
-                        print(" ")
                     else:
-                        print(f"Failed to enroll {self.name} in {course.name}: Course full.")
+                        print(f"Trying to enroll {self.name} into {course.code}...")
+                        print(f"Cannot register for {course.code} due to a scheduling conflict for {course.day} at {course.time}")
                         print(" ")
                 else:
-                    print(f"Trying to enroll {self.name} into {course.code}...")
-                    print(f"Cannot register for {course.code} due to a scheduling conflict for {course.day} at {course.time}")
+                    print(f"{self.name} has reached the credit limit and cannot register for anymore courses.")  
                     print(" ")
             else:
-                print(f"{self.name} has reached the credit limit and cannot register for anymore courses.")  
+                print(f"{self.name} is already in the course {course.name}.")
                 print(" ")
-        else:
-            print(f"{self.name} is already in the course {course.name}.")
-            print(" ")
             
     def add_classes_taken(self, course):
        self.finished_courses.append(course)
@@ -98,7 +101,7 @@ class Genetics(Biology, Student):
     def __init__(self, name, student_id):
         super().__init__(name, student_id)
 
-# MuMultiple Inheritance
+# Multiple Inheritance
 class ElectricalEngineering_and_Physics(ElectricalEngineering, Physics):
     def __init__(self, name, student_id):
         super().__init__(name,student_id)
@@ -180,6 +183,7 @@ PHYS2303.add_prerequisites(PHYS1155)
 PHYS4623 = Course("PHYS4623", "Medical Physics", 4, "Wednesday", "11:45", 15)
 EECE2140 = Course("EECE2140", "Computing Fundamentals for Engineers", 4, "Wednesday", "11:45", 35)
 MATH1341 = Course("MATH1341", "Calculus 1 for Engineers", 4, "Friday", "11:45", 30)
+BIOL5583 = Course("BIOL5583", "Biology Elective", 4, "Thursday", "11:45", 35)
 
 # =============================
 def main():
@@ -238,5 +242,9 @@ def main():
     rebecca = Genetics("Rebecca Turner", 10006)
     print("These are Rebecca's required courses:")
     print(rebecca.required_courses)
+    
+    # Attempt to enroll in a class that is not in his elective list
+    frank.enroll(BIOL5583)
+
 
 main()
